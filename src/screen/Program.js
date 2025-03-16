@@ -25,7 +25,7 @@ function Program() {
   };
 
   return (
-    <div>
+    <div className="d-flex flex-column min-vh-100">
       {/* Header */}
       <div className="bg-primary text-white p-3 d-flex align-items-center">
         <img
@@ -42,26 +42,32 @@ function Program() {
         <button
             className="btn btn-link nav-item nav-link"
             onClick={() => navigate('/Dashboard')}
-          >
+        >
             Home
-          </button>
-          {/* Redirect to Program */}
-          <button
+        </button>
+        {/* Redirect to Program */}
+        <button
             className="btn btn-link nav-item nav-link"
             onClick={() => navigate('/Program')}
-          >
+        >
             My Courses
-          </button>
-          <button className="btn btn-link nav-item nav-link">My Finances</button>
-          <button className="btn btn-link nav-item nav-link">My Grades</button>
-          <button className="btn btn-link nav-item nav-link">Program Requirements</button>
+        </button>
+        <button className="btn btn-link nav-item nav-link" onClick={() => navigate('/Finances')}>
+            My Finances
+        </button>
+        <button className="btn btn-link nav-item nav-link" onClick={() => navigate('/Grades')}>
+            My Grades
+        </button>
+        <button className="btn btn-link nav-item nav-link" onClick={() => navigate('/Program_Requirements')}>
+            Program Requirements
+        </button>
         </div>
         <div className="ml-auto">
-          <button className="btn btn-outline-primary" onClick={handleLoginLogout}>
+        <button className="btn btn-outline-primary" onClick={handleLoginLogout}>
             {user.isLoggedIn ? 'Log Out' : 'Log In'}
-          </button>
+        </button>
         </div>
-      </nav>
+    </nav>
 
       {/* Body Section: Program Details */}
       <div className="container my-4">
@@ -98,8 +104,14 @@ function Program() {
         </div>
       </div>
 
+      <div className="d-flex justify-content-center mt-4 mb-5">
+          <button className="btn btn-primary" onClick={() => navigate('/Course_Enroll')}>
+            Add Course
+          </button>
+      </div>
+
       {/* Footer (same as Dashboard.js) */}
-      <footer className="bg-primary text-white p-3">
+      <footer className="bg-primary text-white p-3 mt-auto">
         <div className="container">
           <div className="row">
             <div className="col-md-6 border-right">
