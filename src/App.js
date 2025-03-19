@@ -7,8 +7,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/Screen/login" element={<Login />} />
-        <Route path="/Screen/signup" element={<Signup />} />
+        <Route path="/Screen/Login" element={<Login />} />
+        <Route path="/Screen/Signup" element={<Signup />} />
         <Route path="/" element={<Login />} />
       </Routes>
     </Router>
@@ -16,47 +16,4 @@ function App() {
 }
 
 export default App;
-
-
-
-/*
-function App() {
-  return (
-    <div className="container mt-5">
-      <h1 className="text-center text-primary">Bootstrap is Working! div n pre n roh we r on
-      </h1>
-      <button className="btn btn-success">Click Me</button>
-    </div>
-  );
-}
-
-export default App;
-
-*/
-/*
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
-
-export default App;
-*/
-
-
 

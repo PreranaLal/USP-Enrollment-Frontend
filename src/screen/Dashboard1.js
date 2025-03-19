@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -26,16 +27,16 @@ function App() {
   };
 
   return (
-    <div>
+    <div className="d-flex flex-column min-vh-100">
       {/* Header */}
       <div className="bg-primary text-white p-3 d-flex align-items-center">
-  <img
-    src="./USP_Logo.png" // adjust the path accordingly
-    alt="Logo"
-    style={{ width: '100px', height: '100px', marginRight: '8px' }}
-  />
-  <h3 className="mb-0">Dashboard</h3>
-</div>
+        <img
+          src="./USP_Logo.png" // adjust the path accordingly
+          alt="Logo"
+          style={{ width: '50px', height: '50px', marginRight: '8px' }}
+        />
+        <h3 className="mb-0">Dashboard</h3>
+      </div>
 
 
       {/* Navigation Bar */}
@@ -54,9 +55,13 @@ function App() {
           >
             My Courses
           </button>
-          <button className="btn btn-link nav-item nav-link">My Finances</button>
-          <button className="btn btn-link nav-item nav-link">My Grades</button>
-          <button className="btn btn-link nav-item nav-link">
+          <button className="btn btn-link nav-item nav-link" onClick={() => navigate('/Finances')}>
+            My Finances
+          </button>
+          <button className="btn btn-link nav-item nav-link" onClick={() => navigate('/Grades')}>
+            My Grades
+          </button>
+          <button className="btn btn-link nav-item nav-link" onClick={() => navigate('/Program_Requirements')}>
             Program Requirements
           </button>
         </div>
@@ -100,7 +105,7 @@ function App() {
       </div>
 
       {/* Footer */}
-      <footer className="bg-primary text-white p-3">
+      <footer className="bg-primary text-white p-3 mt-auto">
         <div className="container">
           <div className="row">
             <div className="col-md-6 border-right">

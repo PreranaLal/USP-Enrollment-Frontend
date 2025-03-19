@@ -11,7 +11,7 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <div className="d-flex flex-column min-vh-100">
       {/* Header */}
       <div className="bg-primary text-white p-3 d-flex align-items-center">
         <img
@@ -77,7 +77,7 @@ const Login = () => {
       </div>
 
       {/* Footer */}
-      <footer className="bg-primary text-white p-3">
+      <footer className="bg-primary text-white p-3 mt-auto">
         <div className="container">
           <div className="row">
             <div className="col-md-6 border-right">
