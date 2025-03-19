@@ -2,7 +2,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import Dashboard from './screen/Dashboard';
+import Dashboard from './screen/Dashboard/Dashboard';
+
 import Program from './screen/Program';
 import Login from './screen/Login';
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
