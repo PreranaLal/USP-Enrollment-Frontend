@@ -105,7 +105,7 @@ function Dashboard() {
             </button>
             <button
               className="btn btn-link nav-item nav-link"
-              onClick={() => navigate("/program-requirements")}
+              onClick={() => navigate("/Program_Requirements")}
             >
               Program Requirements
             </button>
@@ -140,7 +140,7 @@ function Dashboard() {
                 <strong>Phone Number:</strong> {studentData.phone || "N/A"}
               </p>
               <p>
-                <strong>Program:</strong> {studentData.program || "Not assigned"}
+                <strong>Program:</strong> {studentData?.program_name || "Not assigned"}
               </p>
             </div>
           </div>
