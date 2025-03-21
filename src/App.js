@@ -2,6 +2,8 @@ import React from "react";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from "./screen/Login";  // Corrected path
 import Signup from "./screen/Signup";  // Corrected path
+import Dashboard from "./screen/Dashboard";
+
 
 function App() {
   return (

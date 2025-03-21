@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-function App() {
+function ProgramRequirements() {
   // Dummy state for user login demo.
   const navigate = useNavigate(); // Hook for navigation
   const [user, setUser] = useState({
@@ -31,18 +30,17 @@ function App() {
       {/* Header */}
       <div className="bg-primary text-white p-3 d-flex align-items-center">
         <img
-          src="./USP_Logo.png" // adjust the path accordingly
+          src="./USP_Logo.png" 
           alt="Logo"
           style={{ width: '50px', height: '50px', marginRight: '8px' }}
         />
         <h3 className="mb-0">Dashboard</h3>
       </div>
 
-
       {/* Navigation Bar */}
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <div className="navbar-nav">
-        <button
+          <button
             className="btn btn-link nav-item nav-link"
             onClick={() => navigate('/Dashboard')}
           >
@@ -72,36 +70,9 @@ function App() {
         </div>
       </nav>
 
-      {/* Student Information Card */}
-      <div className="container my-4">
-        <div className="card">
-          <div className="card-header">
-            Welcome {user.isLoggedIn ? user.firstName : 'User'}
-          </div>
-          <div className="card-body">
-            <p>
-              <strong>ID:</strong> {user.id}
-            </p>
-            <p>
-              <strong>First Name:</strong> {user.firstName}
-            </p>
-            <p>
-              <strong>Last Name:</strong> {user.lastName}
-            </p>
-            <p>
-              <strong>Date of Birth:</strong> {user.dob}
-            </p>
-            <p>
-              <strong>Email:</strong> {user.email}
-            </p>
-            <p>
-              <strong>Phone Number:</strong> {user.phone}
-            </p>
-            <p>
-              <strong>Program:</strong> {user.program}
-            </p>
-          </div>
-        </div>
+      {/* Program Requirements Title */}
+      <div className="container mt-4">
+        <h2 className="text-center mb-4">Program Requirements</h2>
       </div>
 
       {/* Footer */}
@@ -109,11 +80,10 @@ function App() {
         <div className="container">
           <div className="row">
             <div className="col-md-6 border-right">
-              Disclaimer & Copyright | Contact US
+              Disclaimer & Copyright | Contact Us
             </div>
             <div className="col-md-6 text-md-right">
-              University of the South Pacific Laucala Campus, Suva, Fiji,
-              Tel: +679 3231000
+              University of the South Pacific Laucala Campus, Suva, Fiji, Tel: +679 3231000
             </div>
           </div>
         </div>
@@ -122,4 +92,4 @@ function App() {
   );
 }
 
-export default App;
+export default ProgramRequirements;

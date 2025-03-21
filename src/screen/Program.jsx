@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-function Dashboard() {
+function Program() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [studentData, setStudentData] = useState(null);
@@ -12,35 +12,31 @@ function Dashboard() {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-
     if (!storedUser) {
-      navigate("/login"); // Redirect to login if no user is found
+      navigate("/login");
       return;
     }
-
     const parsedUser = JSON.parse(storedUser);
     setUser(parsedUser);
 
     if (parsedUser.role_id === 3) {
-      // Fetch student details only for students (role_id = 3)
+      // Fetch student details for students (role_id = 3)
       axios
         .get(`http://localhost:4149/api/student/${parsedUser.id}`)
         .then((response) => {
           setStudentData(response.data);
           setLoading(false);
         })
-        .catch((error) => {
-          console.error("Error fetching student data:", error);
+        .catch((err) => {
+          console.error("Error fetching student data:", err);
           setError("Failed to fetch student data.");
           setLoading(false);
         });
     } else {
-      // Redirect staff users to their dashboard (if implemented)
       navigate("/staff-dashboard");
     }
   }, [navigate]);
 
-  // Handle Logout
   const handleLogout = () => {
     localStorage.removeItem("user");
     navigate("/login");
@@ -105,7 +101,7 @@ function Dashboard() {
             </button>
             <button
               className="btn btn-link nav-item nav-link"
-              onClick={() => navigate("/Program_Requirements")}
+              onClick={() => navigate("/program-requirements")}
             >
               Program Requirements
             </button>
@@ -113,45 +109,54 @@ function Dashboard() {
         </div>
       </nav>
 
-      {/* Student Information Card */}
-      {studentData ? (
-        <div className="container my-4">
-          <div className="card shadow">
-            <div className="card-header bg-primary text-white">
-              Welcome {studentData.first_name} {studentData.last_name}
-            </div>
-            <div className="card-body">
-              <p>
-                <strong>ID:</strong> {studentData.id}
-              </p>
-              <p>
-                <strong>First Name:</strong> {studentData.first_name}
-              </p>
-              <p>
-                <strong>Last Name:</strong> {studentData.last_name}
-              </p>
-              <p>
-                <strong>Date of Birth:</strong> {studentData.dob}
-              </p>
-              <p>
-                <strong>Email:</strong> {studentData.email}
-              </p>
-              <p>
-                <strong>Phone Number:</strong> {studentData.phone || "N/A"}
-              </p>
-              <p>
-                <strong>Program:</strong> {studentData?.program_name || "Not assigned"}
-              </p>
-            </div>
+      {/* Program Details */}
+      <div className="container my-4">
+        <div className="card shadow">
+          <div className="card-header bg-primary text-white">
+            Program Details
+          </div>
+          <div className="card-body">
+            <table className="table table-striped table-bordered mb-0">
+              <tbody>
+                <tr>
+                  <td><strong>Student Name</strong></td>
+                  <td>
+                    {studentData.first_name} {studentData.last_name}
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Program</strong></td>
+                  <td>{studentData?.program_name || "Not assigned"}</td>
+                </tr>
+                <tr>
+                  <td><strong>Enrolled Units</strong></td>
+                  <td>
+                    {studentData.enrolledUnits && studentData.enrolledUnits.length > 0 ? (
+                      <ul className="mb-0">
+                        {studentData.enrolledUnits.map((unit, index) => (
+                          <li key={index}>{unit}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <span>No units enrolled currently</span>
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
-      ) : (
-        <div className="container my-4">
-          <div className="alert alert-warning text-center">
-            No student data found.
-          </div>
-        </div>
-      )}
+      </div>
+
+      {/* Add Course Button */}
+      <div className="d-flex justify-content-center mt-4 mb-5">
+        <button
+          className="btn btn-primary"
+          onClick={() => navigate("/Course_Enroll")}
+        >
+          Add Course
+        </button>
+      </div>
 
       {/* Footer */}
       <footer className="bg-primary text-white p-3 mt-auto">
@@ -171,4 +176,5 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default Program;
+
