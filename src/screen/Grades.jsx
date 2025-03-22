@@ -1,40 +1,81 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
+import axios from "axios";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Grades() {
-    // Dummy state for user login demo.
-    const navigate = useNavigate(); // Hook for navigation
-    const [user, setUser] = useState({
-        isLoggedIn: false,
-        id: '123456',
-        firstName: 'User',
-        lastName: 'Doe',
-        dob: '1990-01-01',
-        email: 'user@example.com',
-        phone: '+1234567890',
-        program: 'Computer Science'
-    });
+    const navigate = useNavigate();
+    const [user, setUser] = useState(null);
+    const [grades, setGradesData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    // Toggle login state for demonstration.
-    const handleLoginLogout = () => {
-        setUser(prev => ({
-            ...prev,
-            isLoggedIn: !prev.isLoggedIn,
-            firstName: prev.isLoggedIn ? 'User' : 'John' // Change the name when logged in.
-        }));
-    };
+    useEffect(() => {
+        const storedUser = localStorage.getItem("user");
+    
+        if (!storedUser) {
+          navigate("/login"); // Redirect to login if no user is found
+          return;
+        }
+    
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+    
+        if (parsedUser.role_id === 3) {
+          // Fetch finance details only for students (role_id = 3)
+          axios
+            .get(`http://localhost:4149/api/grades/${parsedUser.id}`)
+            .then((response) => {
+                setGradesData(response.data);
+                
+                setLoading(false);
+            })
+            .catch((error) => {
+              console.error("Error fetching Grade Data:", error);
+              setError("Failed to fetch Grade Data.");
+              setLoading(false);
+            });
+        } else {
+          // Redirect staff users to their dashboard (if implemented)
+          navigate("/staff-dashboard");
+        }
+      }, [navigate]);
+
+    // Handle Logout
+    const handleLogout = () => {
+        localStorage.removeItem("user");
+        navigate("/login");
+    };  
+
+    if (loading) {
+        return (
+            <div className="d-flex justify-content-center mt-5">
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return <div className="alert alert-danger text-center mt-3">{error}</div>;
+    }
 
     return (
         <div className="d-flex flex-column min-vh-100">
             {/* Header */}
-            <div className="bg-primary text-white p-3 d-flex align-items-center">
-                <img
-                    src="./USP_Logo.png" 
-                    alt="Logo"
-                    style={{ width: '50px', height: '50px', marginRight: '8px' }}
-                />
-                <h3 className="mb-0">Dashboard</h3>
+            <div className="bg-primary text-white p-3 d-flex align-items-center justify-content-between">
+                <div className="d-flex align-items-center">
+                    <img
+                        src="/USP_Logo.png"
+                        alt="USP Logo"
+                        style={{ width: "50px", height: "50px", marginRight: "8px" }}
+                    />
+                    <h3 className="mb-0">Dashboard</h3>
+                </div>
+                <button className="btn btn-danger" onClick={handleLogout}>
+                    Logout
+                </button>
             </div>
 
             {/* Navigation Bar */}
@@ -71,11 +112,6 @@ function Grades() {
                         Program Requirements
                     </button>
                 </div>
-                <div className="ml-auto">
-                    <button className="btn btn-outline-primary" onClick={handleLoginLogout}>
-                        {user.isLoggedIn ? 'Log Out' : 'Log In'}
-                    </button>
-                </div>
             </nav>
 
             {/* Grades Table */}
@@ -87,26 +123,27 @@ function Grades() {
                             <tr>
                                 <th>Year</th>
                                 <th>Semester</th>
-                                <th>Course ID</th>
+                                <th>Course Code</th>
                                 <th>Course Name</th>
                                 <th>Grade</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>2024</td>
-                                <td>Semester 1</td>
-                                <td>CS101</td>
-                                <td>Introduction to Programming</td>
-                                <td>A</td>
-                            </tr>
-                            <tr>
-                                <td>2023</td>
-                                <td>Semester 2</td>
-                                <td>CS102</td>
-                                <td>Data Structures</td>
-                                <td>B+</td>
-                            </tr>
+                            {grades.length > 0 ? (
+                                grades.map((grade) => (
+                                    <tr key={grade.id}> {/* use the correct id */}
+                                        <td>{grade.year}</td>
+                                        <td>{grade.semester}</td>
+                                        <td>{grade?.course_code}</td>
+                                        <td>{grade?.course_name}</td>
+                                        <td>{grade.grade}</td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="5" className="text-center">No grades available.</td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>
