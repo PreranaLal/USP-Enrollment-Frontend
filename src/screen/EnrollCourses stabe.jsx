@@ -9,10 +9,8 @@ function EnrollCourses() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
-  // State to store enrolled course IDs
-  const [enrolledCourses, setEnrolledCourses] = useState([]);
 
-  // Fetch logged-in user and eligible courses on component mount
+  // Fetch logged-in user and eligible courses on mount
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (!storedUser) {
@@ -45,14 +43,14 @@ function EnrollCourses() {
       })
       .then((res) => {
         alert("Enrolled successfully in course ID " + courseId + "!");
-        // Mark this course as enrolled in the state
-        setEnrolledCourses(prev => [...prev, courseId]);
+        // Optionally refresh eligibleCourses here if needed.
       })
       .catch((err) => {
         console.error("Error enrolling in course:", err);
         alert("Failed to enroll in course ID " + courseId);
       });
   };
+  
 
   // Basic logout functionality
   const handleLogout = () => {
@@ -133,16 +131,12 @@ function EnrollCourses() {
                     <td>{course.prerequisite_course || "None"}</td>
                     <td>{course.status}</td>
                     <td>
-                      {enrolledCourses.includes(course.course_id) ? (
-                        <button className="btn btn-secondary" disabled>Enrolled</button>
-                      ) : (
-                        <button 
-                          onClick={() => handleEnroll(course.course_id)} 
-                          className="btn btn-primary"
-                        >
-                          Enroll
-                        </button>
-                      )}
+                      <button 
+                        onClick={() => handleEnroll(course.course_id)} 
+                        className="btn btn-primary"
+                      >
+                        Enroll
+                      </button>
                     </td>
                   </tr>
                 ))
