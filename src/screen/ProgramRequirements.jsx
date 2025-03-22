@@ -56,35 +56,38 @@ function ProgramRequirements() {
           <p className="text-danger text-center">{error}</p>
         ) : (
           <table className="table table-bordered">
-            <thead className="thead-dark">
-              <tr>
-                <th>Course Code</th>
-                <th>Prerequisite</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {courses.length > 0 ? (
-                courses.map((course, index) => (
-                  <tr key={index}>
-                    <td>{course.course}</td>
-                    <td>{course.prerequisite_course || 'None'}</td>
-                    <td>
-                      <span className={`badge 
-                        ${course.status === 'Completed' ? 'bg-success' : 
-                        course.status === 'Enrolled' ? 'bg-info' : 
-                        course.status === 'Prerequisite Not Met' ? 'bg-danger' : 
-                        'bg-warning'}`}>{course.status}</span>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="3" className="text-center">No course data available</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+  <thead className="thead-dark">
+    <tr>
+      <th>Course Code</th>
+      <th>Course Name</th> {/* Add column for course name */}
+      <th>Prerequisite</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {courses.length > 0 ? (
+      courses.map((course, index) => (
+        <tr key={index}>
+          <td>{course.course}</td>
+          <td>{course.course_name}</td> {/* Display course name */}
+          <td>{course.prerequisite_course || 'None'}</td>
+          <td>
+            <span className={`badge 
+              ${course.status === 'Completed' ? 'bg-success' : 
+              course.status === 'Enrolled' ? 'bg-info' : 
+              course.status === 'Prerequisite Not Met' ? 'bg-danger' : 
+              'bg-warning'}`}>{course.status}</span>
+          </td>
+        </tr>
+      ))
+    ) : (
+      <tr>
+        <td colSpan="4" className="text-center">No course data available</td> {/* Adjust colspan */}
+      </tr>
+    )}
+  </tbody>
+</table>
+
         )}
       </div>
 
