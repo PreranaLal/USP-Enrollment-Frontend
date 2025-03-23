@@ -10,7 +10,7 @@ function ProgramRequirements() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:4149/api/eligible-courses/${studentId}`)
+    fetch(`http://localhost:4149/api/program-courses/${studentId}`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Failed to fetch course data');

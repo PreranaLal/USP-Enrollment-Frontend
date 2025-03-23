@@ -101,7 +101,7 @@ function Program() {
             </button>
             <button
               className="btn btn-link nav-item nav-link"
-              onClick={() => navigate("/program-requirements")}
+              onClick={() => navigate("/program_requirements")}
             >
               Program Requirements
             </button>
