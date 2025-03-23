@@ -125,7 +125,7 @@ function Dashboard() {
                 <strong>ID:</strong> {studentData.id}
               </p>
               <p>
-                <strong>First Name:</strong> {studentData.f}
+                <strong>First Name:</strong> {studentData.first_name}
               </p>
               <p>
                 <strong>Last Name:</strong> {studentData.last_name}

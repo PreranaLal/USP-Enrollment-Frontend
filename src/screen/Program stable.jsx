@@ -56,14 +56,30 @@ function Program() {
     navigate("/login");
   };
 
+  // const handleAddCourse = async () => {
+  //   try {
+  //     const response = await axios.get(`http://localhost:4149/api/finances/${user.id}`);
+  //     const financeStatus = response.data.status;
+
+  //     if (financeStatus === "hold") {
+  //       alert("❌ You have a financial hold. Please clear your dues before enrolling.");
+  //     } else {
+  //       navigate("/Course_Enroll");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error checking financial status:", error);
+  //     alert("⚠️ Unable to verify financial status. Please try again.");
+  //   }
+  // };
+
   const handleAddCourse = async () => {
     try {
       const response = await axios.get(`http://localhost:4149/api/finances/${user.id}`);
       const financeRecords = response.data; // Assuming API returns an array of records
-
+  
       // Check if any record has 'hold' status
       const hasHold = financeRecords.some(record => record.status === "hold");
-
+  
       if (hasHold) {
         alert("❌ You have a financial hold. Please clear your dues before enrolling.");
       } else {
@@ -74,21 +90,8 @@ function Program() {
       alert("⚠️ Unable to verify financial status. Please try again.");
     }
   };
+  
 
-  const handleDropCourse = async (enrollmentId) => {
-    try {
-      await axios.delete(`http://localhost:4149/api/enrollment/${enrollmentId}`);
-      // Refresh the enrollments list
-      const response = await axios.get(`http://localhost:4149/api/student/${user.id}/enrollments`);
-      setStudentData((prevData) => ({
-        ...prevData,
-        enrolledUnits: response.data,
-      }));
-    } catch (error) {
-      console.error("Error dropping course:", error);
-      alert("⚠️ Unable to drop the course. Please try again.");
-    }
-  };
 
   if (loading)
     return (
@@ -182,14 +185,8 @@ function Program() {
                     {studentData.enrolledUnits && studentData.enrolledUnits.length > 0 ? (
                       <ul className="mb-0">
                         {studentData.enrolledUnits.map((unit, index) => (
-                          <li key={index} className="d-flex justify-content-between align-items-center mb-2">
-                            <span>{unit.course_code} - {unit.course_name}</span>
-                            <button
-                              className="btn btn-danger btn-sm"
-                              onClick={() => handleDropCourse(unit.enrollment_id)}
-                            >
-                              Drop
-                            </button>
+                          <li key={index}>
+                            {unit.course_code} - {unit.course_name}
                           </li>
                         ))}
                       </ul>
@@ -204,10 +201,21 @@ function Program() {
         </div>
       </div>
 
+
       {/* Add Course Button */}
-      <div className="d-flex justify-content-center mt-4 mb-5">
+      {/* <div className="d-flex justify-content-center mt-4 mb-5">
+        <button
+          className="btn btn-primary"
+          onClick={() => navigate("/Course_Enroll")}
+        >
+          Add Course
+        </button>
+      </div> */}
+
+<div className="d-flex justify-content-center mt-4 mb-5">
         <button className="btn btn-primary" onClick={handleAddCourse}>Add Course</button>
       </div>
+      
 
       {/* Footer */}
       <footer className="bg-primary text-white p-3 mt-auto">
