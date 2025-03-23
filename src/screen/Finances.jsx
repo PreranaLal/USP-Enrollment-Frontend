@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-function Dashboard() {
+function Finance() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [studentData, setStudentData] = useState(null);
+  const [financeData, setFinanceData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -22,16 +22,16 @@ function Dashboard() {
     setUser(parsedUser);
 
     if (parsedUser.role_id === 3) {
-      // Fetch student details only for students (role_id = 3)
+      // Fetch finance details only for students (role_id = 3)
       axios
-        .get(`http://localhost:4149/api/student/${parsedUser.id}`)
+        .get(`http://localhost:4149/api/finances/${parsedUser.id}`)
         .then((response) => {
-          setStudentData(response.data);
+          setFinanceData(response.data);
           setLoading(false);
         })
         .catch((error) => {
-          console.error("Error fetching student data:", error);
-          setError("Failed to fetch student data.");
+          console.error("Error fetching finance data:", error);
+          setError("Failed to fetch finance data.");
           setLoading(false);
         });
     } else {
@@ -68,7 +68,7 @@ function Dashboard() {
             alt="USP Logo"
             style={{ width: "50px", height: "50px", marginRight: "8px" }}
           />
-          <h3 className="mb-0">Dashboard</h3>
+          <h3 className="mb-0">Finance</h3>
         </div>
         <button className="btn btn-danger" onClick={handleLogout}>
           Logout
@@ -113,42 +113,63 @@ function Dashboard() {
         </div>
       </nav>
 
-      {/* Student Information Card */}
-      {studentData ? (
+      {/* Finance Information Table */}
+      {financeData ? (
         <div className="container my-4">
           <div className="card shadow">
             <div className="card-header bg-primary text-white">
-              Welcome {studentData.first_name} {studentData.last_name}
+              Finance Details
             </div>
             <div className="card-body">
-              <p>
-                <strong>ID:</strong> {studentData.id}
-              </p>
-              <p>
-                <strong>First Name:</strong> {studentData.first_name}
-              </p>
-              <p>
-                <strong>Last Name:</strong> {studentData.last_name}
-              </p>
-              <p>
-                <strong>Date of Birth:</strong> {studentData.dob}
-              </p>
-              <p>
-                <strong>Email:</strong> {studentData.email}
-              </p>
-              <p>
-                <strong>Phone Number:</strong> {studentData.phone || "N/A"}
-              </p>
-              <p>
-                <strong>Program:</strong> {studentData?.program_name || "Not assigned"}
-              </p>
+              <div className="table-responsive">
+                <table className="table table-bordered table-striped">
+                  <thead className="thead-dark">
+                    <tr>
+                      <th>Invoice Number</th>
+                      <th>Status</th>
+                      <th>Year</th>
+                      <th>Balance</th>
+                      <th>Semester</th>
+                      <th>Payment Date</th>
+                    </tr>
+                  </thead>
+                  {/* <tbody>
+                    <tr>
+                      <td>{financeData.invoice_number}</td>
+                      <td>{financeData.status}</td>
+                      <td>{financeData.year}</td>
+                      <td>{financeData.balance}</td>
+                      <td>{financeData.semester}</td>
+                      <td>{financeData.payment_date}</td>
+                    </tr>
+                  </tbody> */}
+                  <tbody>
+  {financeData.length > 0 ? (
+    financeData.map((record, index) => (
+      <tr key={index}>
+        <td>{record.invoice_number}</td>
+        <td>{record.status}</td>
+        <td>{record.year}</td>
+        <td>{record.balance}</td>
+        <td>{record.semester}</td>
+        <td>{new Date(record.payment_date).toLocaleDateString()}</td>
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td colSpan="6" className="text-center">No finance data found.</td>
+    </tr>
+  )}
+</tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
       ) : (
         <div className="container my-4">
           <div className="alert alert-warning text-center">
-            No student data found.
+            No finance data found.
           </div>
         </div>
       )}
@@ -171,4 +192,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default Finance;
