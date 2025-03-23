@@ -40,6 +40,12 @@ function ProgramRequirements() {
     }
   }, [navigate]);
 
+  // Handle Logout
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/login");
+  };  
+
   const getYear = (course) => {
     const match = course.course.match(/\d/);
     return match ? parseInt(match[0]) : null;
@@ -109,116 +115,183 @@ function ProgramRequirements() {
   const { nodes, edges } = generateNodesAndEdges();
 
   return (
-    <div className="container mt-4">
-      <h2 className="text-center mb-4">Program Requirements</h2>
-      
-      <div className="text-center mb-3">
-        <button className="btn btn-primary" onClick={() => setShowTree(!showTree)}>
-          {showTree ? "Show Table View" : "Show Tree View"}
-        </button>
+
+    <div className="d-flex flex-column min-vh-100">
+
+      {/* Header */}
+      <div className="bg-primary text-white p-3 d-flex align-items-center justify-content-between">
+          <div className="d-flex align-items-center">
+              <img
+                  src="/USP_Logo.png"
+                  alt="USP Logo"
+                  style={{ width: "50px", height: "50px", marginRight: "8px" }}
+              />
+              <h3 className="mb-0">Student Enrollment | Program Requirements</h3>
+          </div>
+          <button className="btn btn-danger" onClick={handleLogout}>
+              Logout
+          </button>
       </div>
 
-      {loading ? (
-        <p className="text-center">Loading courses...</p>
-      ) : error ? (
-        <p className="text-danger text-center">{error}</p>
-      ) : showTree ? (
-        <div style={{ height: "500px", border: "1px solid #ccc", borderRadius: "10px", padding: "10px" }}>
-          <ReactFlow nodes={nodes} edges={edges} fitView>
-            <Controls />
-            <Background />
-          </ReactFlow>
+      {/* Navigation Bar */}
+      <nav className="navbar navbar-expand-lg navbar-light bg-light">
+          <div className="navbar-nav">
+              <button
+                  className="btn btn-link nav-item nav-link"
+                  onClick={() => navigate('/Dashboard')}
+              >
+                  Home
+              </button>
+              <button
+                  className="btn btn-link nav-item nav-link"
+                  onClick={() => navigate('/Program')}
+              >
+                  My Courses
+              </button>
+              <button
+                  className="btn btn-link nav-item nav-link"
+                  onClick={() => navigate('/Finances')}
+              >
+                  My Finances
+              </button>
+              <button
+                  className="btn btn-link nav-item nav-link"
+                  onClick={() => navigate('/Grades')}
+              >
+                  My Grades
+              </button>
+              <button
+                  className="btn btn-link nav-item nav-link"
+                  onClick={() => navigate('/Program_Requirements')}
+              >
+                  Program Requirements
+              </button>
+          </div>
+      </nav>
+      <div className="container mt-4">
+        <h2 className="text-center mb-4">Program Requirements</h2>
+        
+        <div className="text-center mb-3">
+          <button className="btn btn-primary" onClick={() => setShowTree(!showTree)}>
+            {showTree ? "Show Table View" : "Show Tree View"}
+          </button>
         </div>
-      ) : (
-        <>
-          <h3 className="text-center">Year 1 Courses</h3>
-          <table className="table table-bordered">
-            <thead className="thead-dark">
-              <tr>
-                <th>Course Code</th>
-                <th>Course Name</th>
-                <th>Prerequisite</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {courses.filter(c => getYear(c) === 1).map((course, index) => (
-                <tr key={index}>
-                  <td>{course.course}</td>
-                  <td>{course.course_name}</td>
-                  <td>{course.prerequisite_course || 'None'}</td>
-                  <td>
-                    <span className={`badge 
-                      ${course.status === 'Completed' ? 'bg-success' : 
-                      course.status === 'Enrolled' ? 'bg-info' : 
-                      course.status === 'Pending' ? 'bg-warning' : 
-                      course.status === 'Prerequisite Not Met' ? 'bg-danger' : 
-                      'bg-secondary'}`}>{course.status}</span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
 
-          <h3 className="text-center">Year 2 Courses</h3>
-          <table className="table table-bordered">
-            <thead className="thead-dark">
-              <tr>
-                <th>Course Code</th>
-                <th>Course Name</th>
-                <th>Prerequisite</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {courses.filter(c => getYear(c) === 2).map((course, index) => (
-                <tr key={index}>
-                  <td>{course.course}</td>
-                  <td>{course.course_name}</td>
-                  <td>{course.prerequisite_course || 'None'}</td>
-                  <td>
-                    <span className={`badge 
-                      ${course.status === 'Completed' ? 'bg-success' : 
-                      course.status === 'Enrolled' ? 'bg-info' : 
-                      course.status === 'Pending' ? 'bg-warning' : 
-                      course.status === 'Prerequisite Not Met' ? 'bg-danger' : 
-                      'bg-secondary'}`}>{course.status}</span>
-                  </td>
+        {loading ? (
+          <p className="text-center">Loading courses...</p>
+        ) : error ? (
+          <p className="text-danger text-center">{error}</p>
+        ) : showTree ? (
+          <div style={{ height: "500px", border: "1px solid #ccc", borderRadius: "10px", padding: "10px" }}>
+            <ReactFlow nodes={nodes} edges={edges} fitView>
+              <Controls />
+              <Background />
+            </ReactFlow>
+          </div>
+        ) : (
+          <>
+            <h3 className="text-center">Year 1 Courses</h3>
+            <table className="table table-bordered">
+              <thead className="thead-dark">
+                <tr>
+                  <th>Course Code</th>
+                  <th>Course Name</th>
+                  <th>Prerequisite</th>
+                  <th>Status</th>
                 </tr>
-              ))}
-            </tbody>
-            
-          </table><h3 className="text-center">Year 3 Courses</h3>
-          <table className="table table-bordered">
-            <thead className="thead-dark">
-              <tr>
-                <th>Course Code</th>
-                <th>Course Name</th>
-                <th>Prerequisite</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {courses.filter(c => getYear(c) === 3).map((course, index) => (
-                <tr key={index}>
-                  <td>{course.course}</td>
-                  <td>{course.course_name}</td>
-                  <td>{course.prerequisite_course || 'None'}</td>
-                  <td>
-                    <span className={`badge 
-                      ${course.status === 'Completed' ? 'bg-success' : 
-                      course.status === 'Enrolled' ? 'bg-info' : 
-                      course.status === 'Pending' ? 'bg-warning' : 
-                      course.status === 'Prerequisite Not Met' ? 'bg-danger' : 
-                      'bg-secondary'}`}>{course.status}</span>
-                  </td>
+              </thead>
+              <tbody>
+                {courses.filter(c => getYear(c) === 1).map((course, index) => (
+                  <tr key={index}>
+                    <td>{course.course}</td>
+                    <td>{course.course_name}</td>
+                    <td>{course.prerequisite_course || 'None'}</td>
+                    <td>
+                      <span className={`badge 
+                        ${course.status === 'Completed' ? 'bg-success' : 
+                        course.status === 'Enrolled' ? 'bg-info' : 
+                        course.status === 'Pending' ? 'bg-warning' : 
+                        course.status === 'Prerequisite Not Met' ? 'bg-danger' : 
+                        'bg-secondary'}`}>{course.status}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            <h3 className="text-center">Year 2 Courses</h3>
+            <table className="table table-bordered">
+              <thead className="thead-dark">
+                <tr>
+                  <th>Course Code</th>
+                  <th>Course Name</th>
+                  <th>Prerequisite</th>
+                  <th>Status</th>
                 </tr>
-              ))}
-            </tbody>
-            
-          </table>
-        </>
-      )}
+              </thead>
+              <tbody>
+                {courses.filter(c => getYear(c) === 2).map((course, index) => (
+                  <tr key={index}>
+                    <td>{course.course}</td>
+                    <td>{course.course_name}</td>
+                    <td>{course.prerequisite_course || 'None'}</td>
+                    <td>
+                      <span className={`badge 
+                        ${course.status === 'Completed' ? 'bg-success' : 
+                        course.status === 'Enrolled' ? 'bg-info' : 
+                        course.status === 'Pending' ? 'bg-warning' : 
+                        course.status === 'Prerequisite Not Met' ? 'bg-danger' : 
+                        'bg-secondary'}`}>{course.status}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+              
+            </table><h3 className="text-center">Year 3 Courses</h3>
+            <table className="table table-bordered">
+              <thead className="thead-dark">
+                <tr>
+                  <th>Course Code</th>
+                  <th>Course Name</th>
+                  <th>Prerequisite</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {courses.filter(c => getYear(c) === 3).map((course, index) => (
+                  <tr key={index}>
+                    <td>{course.course}</td>
+                    <td>{course.course_name}</td>
+                    <td>{course.prerequisite_course || 'None'}</td>
+                    <td>
+                      <span className={`badge 
+                        ${course.status === 'Completed' ? 'bg-success' : 
+                        course.status === 'Enrolled' ? 'bg-info' : 
+                        course.status === 'Pending' ? 'bg-warning' : 
+                        course.status === 'Prerequisite Not Met' ? 'bg-danger' : 
+                        'bg-secondary'}`}>{course.status}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+              
+            </table>
+          </>
+        )}
+      </div>
+      {/* Footer */}
+      <footer className="bg-primary text-white p-3 mt-auto">
+          <div className="container">
+              <div className="row">
+                  <div className="col-md-6 border-right">
+                      Disclaimer & Copyright | Contact Us
+                  </div>
+                  <div className="col-md-6 text-md-right">
+                      University of the South Pacific Laucala Campus, Suva, Fiji, Tel: +679 3231000
+                  </div>
+              </div>
+          </div>
+      </footer>
     </div>
   );
 }

@@ -68,7 +68,7 @@ function Finance() {
             alt="USP Logo"
             style={{ width: "50px", height: "50px", marginRight: "8px" }}
           />
-          <h3 className="mb-0">Finance</h3>
+          <h3 className="mb-0">Student Enrollment | My Finances</h3>
         </div>
         <button className="btn btn-danger" onClick={handleLogout}>
           Logout

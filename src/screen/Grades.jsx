@@ -71,7 +71,7 @@ function Grades() {
                         alt="USP Logo"
                         style={{ width: "50px", height: "50px", marginRight: "8px" }}
                     />
-                    <h3 className="mb-0">Dashboard</h3>
+                    <h3 className="mb-0">Student Enrollment | My Grades</h3>
                 </div>
                 <button className="btn btn-danger" onClick={handleLogout}>
                     Logout
