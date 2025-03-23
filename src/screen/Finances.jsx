@@ -133,7 +133,7 @@ function Finance() {
                       <th>Payment Date</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  {/* <tbody>
                     <tr>
                       <td>{financeData.invoice_number}</td>
                       <td>{financeData.status}</td>
@@ -142,7 +142,25 @@ function Finance() {
                       <td>{financeData.semester}</td>
                       <td>{financeData.payment_date}</td>
                     </tr>
-                  </tbody>
+                  </tbody> */}
+                  <tbody>
+  {financeData.length > 0 ? (
+    financeData.map((record, index) => (
+      <tr key={index}>
+        <td>{record.invoice_number}</td>
+        <td>{record.status}</td>
+        <td>{record.year}</td>
+        <td>{record.balance}</td>
+        <td>{record.semester}</td>
+        <td>{new Date(record.payment_date).toLocaleDateString()}</td>
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td colSpan="6" className="text-center">No finance data found.</td>
+    </tr>
+  )}
+</tbody>
                 </table>
               </div>
             </div>

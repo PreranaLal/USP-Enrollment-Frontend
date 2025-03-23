@@ -56,6 +56,43 @@ function Program() {
     navigate("/login");
   };
 
+  // const handleAddCourse = async () => {
+  //   try {
+  //     const response = await axios.get(`http://localhost:4149/api/finances/${user.id}`);
+  //     const financeStatus = response.data.status;
+
+  //     if (financeStatus === "hold") {
+  //       alert("❌ You have a financial hold. Please clear your dues before enrolling.");
+  //     } else {
+  //       navigate("/Course_Enroll");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error checking financial status:", error);
+  //     alert("⚠️ Unable to verify financial status. Please try again.");
+  //   }
+  // };
+
+  const handleAddCourse = async () => {
+    try {
+      const response = await axios.get(`http://localhost:4149/api/finances/${user.id}`);
+      const financeRecords = response.data; // Assuming API returns an array of records
+  
+      // Check if any record has 'hold' status
+      const hasHold = financeRecords.some(record => record.status === "hold");
+  
+      if (hasHold) {
+        alert("❌ You have a financial hold. Please clear your dues before enrolling.");
+      } else {
+        navigate("/Course_Enroll");
+      }
+    } catch (error) {
+      console.error("Error checking financial status:", error);
+      alert("⚠️ Unable to verify financial status. Please try again.");
+    }
+  };
+  
+
+
   if (loading)
     return (
       <div className="d-flex justify-content-center mt-5">
@@ -164,15 +201,21 @@ function Program() {
         </div>
       </div>
 
+
       {/* Add Course Button */}
-      <div className="d-flex justify-content-center mt-4 mb-5">
+      {/* <div className="d-flex justify-content-center mt-4 mb-5">
         <button
           className="btn btn-primary"
           onClick={() => navigate("/Course_Enroll")}
         >
           Add Course
         </button>
+      </div> */}
+
+<div className="d-flex justify-content-center mt-4 mb-5">
+        <button className="btn btn-primary" onClick={handleAddCourse}>Add Course</button>
       </div>
+      
 
       {/* Footer */}
       <footer className="bg-primary text-white p-3 mt-auto">
