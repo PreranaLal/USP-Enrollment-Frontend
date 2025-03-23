@@ -111,37 +111,30 @@ function EnrollCourses() {
           <table className="table table-bordered">
             <thead>
               <tr>
+                <th>Student Name</th>
+                <th>Program</th>
                 <th>Course</th>
-                <th>Course Name</th>
+                <th>Prerequisite Course</th>
+                <th>Status</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
               {eligibleCourses.length === 0 ? (
                 <tr>
-                  <td colSpan="3">No courses available for enrollment.</td>
+                  <td colSpan="6">No courses available for enrollment.</td>
                 </tr>
               ) : (
                 eligibleCourses.map(course => (
                   <tr key={course.course_id}>
-                    <td>{course.course} </td>
-                    <td>{course.course_name}</td>
+                    <td>{course.first_name} {course.last_name}</td>
+                    <td>{course.program_name}</td>
+                    <td>{course.course} ({course.course_id})</td>
+                    <td>{course.prerequisite_course || "None"}</td>
+                    <td>{course.status}</td>
                     <td>
                       {enrolledCourses.includes(course.course_id) ? (
-                        <button 
-                          className="btn"
-                          style={{
-                            backgroundColor: "#4CAF50", // Brighter green
-                            color: "white",
-                            fontWeight: "bold",
-                            border: "none",
-                            padding: "8px 16px",
-                            borderRadius: "4px"
-                          }} 
-                          disabled
-                        >
-                          Enrolled
-                        </button>
+                        <button className="btn btn-secondary" disabled>Enrolled</button>
                       ) : (
                         <button 
                           onClick={() => handleEnroll(course.course_id)} 
@@ -156,14 +149,6 @@ function EnrollCourses() {
               )}
             </tbody>
           </table>
-        </div>
-        <div className="text-center mt-3">
-          <button 
-            className="btn btn-success" 
-            onClick={() => navigate('/Program')}
-          >
-            Done
-          </button>
         </div>
       </div>
 

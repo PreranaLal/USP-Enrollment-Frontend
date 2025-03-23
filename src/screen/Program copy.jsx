@@ -32,20 +32,6 @@ function Program() {
           setError("Failed to fetch student data.");
           setLoading(false);
         });
-
-      // Fetch student enrollments (with course details)
-      axios
-        .get(`http://localhost:4149/api/student/${parsedUser.id}/enrollments`)
-        .then((response) => {
-          // Assuming the API returns a list of enrollments with course details
-          setStudentData((prevData) => ({
-            ...prevData,
-            enrolledUnits: response.data,
-          }));
-        })
-        .catch((err) => {
-          console.error("Error fetching student enrollments:", err);
-        });
     } else {
       navigate("/staff-dashboard");
     }
@@ -148,9 +134,7 @@ function Program() {
                     {studentData.enrolledUnits && studentData.enrolledUnits.length > 0 ? (
                       <ul className="mb-0">
                         {studentData.enrolledUnits.map((unit, index) => (
-                          <li key={index}>
-                            {unit.course_code} - {unit.course_name}
-                          </li>
+                          <li key={index}>{unit}</li>
                         ))}
                       </ul>
                     ) : (
@@ -193,3 +177,4 @@ function Program() {
 }
 
 export default Program;
+
