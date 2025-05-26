@@ -60,59 +60,8 @@ function Finance() {
 
   return (
     <div className="d-flex flex-column min-vh-100">
-      {/* Header */}
-      <div className="bg-primary text-white p-3 d-flex align-items-center justify-content-between">
-        <div className="d-flex align-items-center">
-          <img
-            src="/USP_Logo.png"
-            alt="USP Logo"
-            style={{ width: "50px", height: "50px", marginRight: "8px" }}
-          />
-          <h3 className="mb-0">Finance</h3>
-        </div>
-        <button className="btn btn-danger" onClick={handleLogout}>
-          Logout
-        </button>
-      </div>
-
-      {/* Navigation Bar */}
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
-        <div className="container">
-          <div className="navbar-nav">
-            <button
-              className="btn btn-link nav-item nav-link"
-              onClick={() => navigate("/dashboard")}
-            >
-              Home
-            </button>
-            <button
-              className="btn btn-link nav-item nav-link"
-              onClick={() => navigate("/program")}
-            >
-              My Courses
-            </button>
-            <button
-              className="btn btn-link nav-item nav-link"
-              onClick={() => navigate("/finances")}
-            >
-              My Finances
-            </button>
-            <button
-              className="btn btn-link nav-item nav-link"
-              onClick={() => navigate("/grades")}
-            >
-              My Grades
-            </button>
-            <button
-              className="btn btn-link nav-item nav-link"
-              onClick={() => navigate("/Program_Requirements")}
-            >
-              Program Requirements
-            </button>
-          </div>
-        </div>
-      </nav>
-
+     
+     
       {/* Finance Information Table */}
       {financeData ? (
         <div className="container my-4">
@@ -174,20 +123,7 @@ function Finance() {
         </div>
       )}
 
-      {/* Footer */}
-      <footer className="bg-primary text-white p-3 mt-auto">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-6 border-right">
-              Disclaimer & Copyright | Contact Us
-            </div>
-            <div className="col-md-6 text-md-right">
-              University of the South Pacific, Laucala Campus, Suva, Fiji, Tel:
-              +679 3231000
-            </div>
-          </div>
-        </div>
-      </footer>
+      
     </div>
   );
 }
