@@ -7,6 +7,7 @@ function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [studentData, setStudentData] = useState(null);
+  const [staffData, setStaffData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -22,21 +23,31 @@ function Dashboard() {
     setUser(parsedUser);
 
     if (parsedUser.role_id === 3) {
-      // Fetch student details only for students (role_id = 3)
-      axios
-        .get(`http://localhost:4149/api/student/${parsedUser.id}`)
-        .then((response) => {
+      axios.get(`http://localhost:4149/api/student/${parsedUser.id}`)
+        .then(response => {
           setStudentData(response.data);
           setLoading(false);
         })
-        .catch((error) => {
+        .catch(error => {
           console.error("Error fetching student data:", error);
           setError("Failed to fetch student data.");
           setLoading(false);
         });
+
+    } else if (parsedUser.role_id === 2) {
+      // Fetch staff details
+      axios.get(`http://localhost:4149/api/staff/${parsedUser.id}`)
+        .then(response => {
+          setStaffData(response.data);
+          setLoading(false);
+        })
+        .catch(error => {
+          console.error("Error fetching staff data:", error);
+          setError("Failed to fetch staff data.");
+          setLoading(false);
+        });
     } else {
-      // Redirect staff users to their dashboard (if implemented)
-      navigate("/staff-dashboard");
+      setLoading(false);
     }
   }, [navigate]);
 
@@ -55,8 +66,7 @@ function Dashboard() {
       </div>
     );
 
-  if (error)
-    return <div className="alert alert-danger text-center mt-3">{error}</div>;
+  if (error) return <div className="alert alert-danger text-center mt-3">{error}</div>;
 
   return (
     <div className="d-flex flex-column min-vh-100">
@@ -114,7 +124,7 @@ function Dashboard() {
       </nav>
 
       {/* Student Information Card */}
-      {studentData ? (
+      {studentData && (
         <div className="container my-4">
           <div className="card shadow">
             <div className="card-header bg-primary text-white">
@@ -131,7 +141,7 @@ function Dashboard() {
                 <strong>Last Name:</strong> {studentData.last_name}
               </p>
               <p>
-                <strong>Date of Birth:</strong> {studentData.dob}
+                <strong>Date of Birth:</strong> {new Date(studentData.dob).toLocaleDateString('en-GB')}
               </p>
               <p>
                 <strong>Email:</strong> {studentData.email}
@@ -145,24 +155,24 @@ function Dashboard() {
             </div>
           </div>
         </div>
-      ) : (
-        <div className="container my-4">
-          <div className="alert alert-warning text-center">
-            No student data found.
-          </div>
-        </div>
       )}
 
-      {/* Footer */}
-      <footer className="bg-primary text-white p-3 mt-auto">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-6 border-right">
-              Disclaimer & Copyright | Contact Us
+      {/* Staff Information Card */}
+      {staffData && (
+        <div className="container my-4">
+          <div className="card shadow">
+            <div className="card-header bg-primary text-white">
+              Welcome {staffData.first_name} {staffData.last_name}
             </div>
-            <div className="col-md-6 text-md-right">
-              University of the South Pacific, Laucala Campus, Suva, Fiji, Tel:
-              +679 3231000
+            <div className="card-body">
+              <p><strong>ID:</strong> {staffData.id}</p>
+              <p><strong>First Name:</strong> {staffData.first_name}</p>
+              <p><strong>Last Name:</strong> {staffData.last_name}</p>
+              <p><strong>Email:</strong> {staffData.email}</p>
+              <p><strong>Phone:</strong> {staffData.phone}</p>
+              <p><strong>Department:</strong> {staffData.department}</p>
+              <p><strong>Position:</strong> {staffData.position}</p>
+              
             </div>
           </div>
         </div>
