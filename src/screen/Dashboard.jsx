@@ -10,6 +10,7 @@ function Dashboard() {
   const [staffData, setStaffData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [helloMessage, setHelloMessage] = useState("");
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -23,6 +24,7 @@ function Dashboard() {
     setUser(parsedUser);
 
     if (parsedUser.role_id === 3) {
+      // Fetch student details
       axios.get(`http://localhost:4149/api/student/${parsedUser.id}`)
         .then(response => {
           setStudentData(response.data);
@@ -51,78 +53,28 @@ function Dashboard() {
     }
   }, [navigate]);
 
-  // Handle Logout
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    navigate("/login");
+  const handleHello = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/hello");
+      setHelloMessage(response.data.message);
+    } catch (error) {
+      console.error("Error calling microservice:", error);
+      alert("Failed to connect to the microservice.");
+    }
   };
 
-  if (loading)
-    return (
-      <div className="d-flex justify-content-center mt-5">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
+  if (loading) return (
+    <div className="d-flex justify-content-center mt-5">
+      <div className="spinner-border text-primary" role="status">
+        <span className="visually-hidden">Loading...</span>
       </div>
-    );
+    </div>
+  );
 
   if (error) return <div className="alert alert-danger text-center mt-3">{error}</div>;
 
   return (
     <div className="d-flex flex-column min-vh-100">
-      {/* Header */}
-      <div className="bg-primary text-white p-3 d-flex align-items-center justify-content-between">
-        <div className="d-flex align-items-center">
-          <img
-            src="/USP_Logo.png"
-            alt="USP Logo"
-            style={{ width: "50px", height: "50px", marginRight: "8px" }}
-          />
-          <h3 className="mb-0">Dashboard</h3>
-        </div>
-        <button className="btn btn-danger" onClick={handleLogout}>
-          Logout
-        </button>
-      </div>
-
-      {/* Navigation Bar */}
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
-        <div className="container">
-          <div className="navbar-nav">
-            <button
-              className="btn btn-link nav-item nav-link"
-              onClick={() => navigate("/dashboard")}
-            >
-              Home
-            </button>
-            <button
-              className="btn btn-link nav-item nav-link"
-              onClick={() => navigate("/program")}
-            >
-              My Courses
-            </button>
-            <button
-              className="btn btn-link nav-item nav-link"
-              onClick={() => navigate("/finances")}
-            >
-              My Finances
-            </button>
-            <button
-              className="btn btn-link nav-item nav-link"
-              onClick={() => navigate("/grades")}
-            >
-              My Grades
-            </button>
-            <button
-              className="btn btn-link nav-item nav-link"
-              onClick={() => navigate("/Program_Requirements")}
-            >
-              Program Requirements
-            </button>
-          </div>
-        </div>
-      </nav>
-
       {/* Student Information Card */}
       {studentData && (
         <div className="container my-4">
@@ -176,7 +128,15 @@ function Dashboard() {
             </div>
           </div>
         </div>
-      </footer>
+      )}
+      <a
+  className="btn btn-link nav-item"
+  href="http://localhost:5000/grade-recheck"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  Grade Recheck Form
+</a>
     </div>
   );
 }
