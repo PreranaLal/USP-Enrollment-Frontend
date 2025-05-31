@@ -6,6 +6,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 function Finance() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [studentData, setStudentData] = useState(null);
   const [financeData, setFinanceData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -14,7 +15,7 @@ function Finance() {
     const storedUser = localStorage.getItem("user");
 
     if (!storedUser) {
-      navigate("/login"); // Redirect to login if no user is found
+      navigate("/login");
       return;
     }
 
@@ -22,9 +23,15 @@ function Finance() {
     setUser(parsedUser);
 
     if (parsedUser.role_id === 3) {
-      // Fetch finance details only for students (role_id = 3)
+      // First fetch student data
       axios
-        .get(`http://localhost:4149/api/finances/${parsedUser.id}`)
+        .get(`http://localhost:4149/api/student/${parsedUser.id}`)
+        .then((response) => {
+          setStudentData(response.data);
+          const studentId = response.data.id;
+          // Now fetch finance data using studentId
+          return axios.get(`http://localhost:4149/api/finances/${studentId}`);
+        })
         .then((response) => {
           setFinanceData(response.data);
           setLoading(false);
@@ -35,7 +42,6 @@ function Finance() {
           setLoading(false);
         });
     } else {
-      // Redirect staff users to their dashboard (if implemented)
       navigate("/staff-dashboard");
     }
   }, [navigate]);
@@ -60,8 +66,6 @@ function Finance() {
 
   return (
     <div className="d-flex flex-column min-vh-100">
-     
-     
       {/* Finance Information Table */}
       {financeData ? (
         <div className="container my-4">
@@ -77,39 +81,35 @@ function Finance() {
                       <th>Invoice Number</th>
                       <th>Status</th>
                       <th>Year</th>
-                      <th>Balance</th>
+                      <th>Debit</th>
+                      <th>Credit</th>
                       <th>Semester</th>
                       <th>Payment Date</th>
                     </tr>
                   </thead>
-                  {/* <tbody>
-                    <tr>
-                      <td>{financeData.invoice_number}</td>
-                      <td>{financeData.status}</td>
-                      <td>{financeData.year}</td>
-                      <td>{financeData.balance}</td>
-                      <td>{financeData.semester}</td>
-                      <td>{financeData.payment_date}</td>
-                    </tr>
-                  </tbody> */}
                   <tbody>
-  {financeData.length > 0 ? (
-    financeData.map((record, index) => (
-      <tr key={index}>
-        <td>{record.invoice_number}</td>
-        <td>{record.status}</td>
-        <td>{record.year}</td>
-        <td>{record.balance}</td>
-        <td>{record.semester}</td>
-        <td>{new Date(record.payment_date).toLocaleDateString()}</td>
-      </tr>
-    ))
-  ) : (
-    <tr>
-      <td colSpan="6" className="text-center">No finance data found.</td>
-    </tr>
-  )}
-</tbody>
+                    {financeData.length > 0 ? (
+                      financeData.map((record, index) => (
+                        <tr key={index}>
+                          <td>{record.invoice_number}</td>
+                          <td>{record.status}</td>
+                          <td>{record.year}</td>
+                          <td style={{ color: "red" }}>
+                            ${record.amount_debit ? record.amount_debit : "-"}
+                          </td>
+                          <td style={{ color: "green" }}>
+                            ${record.amount_credit ? record.amount_credit : "-"}
+                          </td>
+                          <td>{record.semester}</td>
+                          <td>{record.payment_date ? new Date(record.payment_date).toLocaleDateString() : ""}</td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="7" className="text-center">No finance data found.</td>
+                      </tr>
+                    )}
+                  </tbody>
                 </table>
               </div>
             </div>
@@ -122,8 +122,6 @@ function Finance() {
           </div>
         </div>
       )}
-
-      
     </div>
   );
 }

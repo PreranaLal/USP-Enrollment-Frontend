@@ -10,15 +10,26 @@ function StudentGradeRecheck() {
   const [reason, setReason] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [grades, setGrades] = useState([]);
 
-  // Autofill student info if available
+  // Fetch student info and grades from backend
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       const user = JSON.parse(storedUser);
-      setStudentId(user.id || "");
-      setFirstName(user.first_name || "");
-      setLastName(user.last_name || "");
+      // Always fetch from backend for security
+      fetch(`http://localhost:4149/api/student/by-id/${user.id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setStudentId(data.id || "");
+          setFirstName(data.first_name || "");
+          setLastName(data.last_name || "");
+        });
+      // Fetch grades for this student
+      fetch(`http://localhost:4149/api/grades/${user.id}`)
+        .then((res) => res.json())
+        .then((data) => setGrades(data))
+        .catch(() => setGrades([]));
     }
   }, []);
 
@@ -27,7 +38,7 @@ function StudentGradeRecheck() {
     setMessage("");
     setError("");
     try {
-      const res = await fetch("http://localhost:5000/grade-recheck", {
+      const res = await fetch("http://localhost:5000/api/grade-recheck", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -40,9 +51,6 @@ function StudentGradeRecheck() {
       });
       if (res.ok) {
         setMessage("Grade recheck submitted successfully!");
-        setStudentId("");
-        setFirstName("");
-        setLastName("");
         setCourseId("");
         setReason("");
       } else {
@@ -71,8 +79,8 @@ function StudentGradeRecheck() {
                 className="form-control"
                 id="studentId"
                 value={studentId}
-                onChange={(e) => setStudentId(e.target.value)}
-                required
+                readOnly
+                disabled
               />
             </div>
             <div className="mb-3">
@@ -82,8 +90,8 @@ function StudentGradeRecheck() {
                 className="form-control"
                 id="firstName"
                 value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                required
+                readOnly
+                disabled
               />
             </div>
             <div className="mb-3">
@@ -93,20 +101,26 @@ function StudentGradeRecheck() {
                 className="form-control"
                 id="lastName"
                 value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                required
+                readOnly
+                disabled
               />
             </div>
             <div className="mb-3">
               <label htmlFor="courseId" className="form-label">Course ID</label>
-              <input
-                type="text"
-                className="form-control"
+              <select
+                className="form-select"
                 id="courseId"
                 value={courseId}
                 onChange={(e) => setCourseId(e.target.value)}
                 required
-              />
+              >
+                <option value="">Select Course</option>
+                {grades.map((grade) => (
+                  <option key={grade.course_code} value={grade.course_code}>
+                    {grade.course_code} 
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="mb-3">
               <label htmlFor="reason" className="form-label">Reason for Change</label>

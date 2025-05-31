@@ -10,7 +10,6 @@ function Dashboard() {
   const [staffData, setStaffData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [helloMessage, setHelloMessage] = useState("");
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -52,16 +51,6 @@ function Dashboard() {
       setLoading(false);
     }
   }, [navigate]);
-
-  const handleHello = async () => {
-    try {
-      const response = await axios.get("http://localhost:5000/api/hello");
-      setHelloMessage(response.data.message);
-    } catch (error) {
-      console.error("Error calling microservice:", error);
-      alert("Failed to connect to the microservice.");
-    }
-  };
 
   if (loading) return (
     <div className="d-flex justify-content-center mt-5">
@@ -113,23 +102,18 @@ function Dashboard() {
       {staffData && (
         <div className="container my-4">
           <div className="card shadow">
-            <div className="card-header bg-primary text-white">
+            <div className="card-header bg-secondary text-white">
               Welcome {staffData.first_name} {staffData.last_name}
             </div>
             <div className="card-body">
               <p><strong>ID:</strong> {staffData.id}</p>
-              <p><strong>First Name:</strong> {staffData.first_name}</p>
-              <p><strong>Last Name:</strong> {staffData.last_name}</p>
               <p><strong>Email:</strong> {staffData.email}</p>
-              <p><strong>Phone:</strong> {staffData.phone}</p>
-              <p><strong>Department:</strong> {staffData.department}</p>
-              <p><strong>Position:</strong> {staffData.position}</p>
-              
+              {/* <p><strong>Department:</strong> {staffData.department}</p>
+              <p><strong>Position:</strong> {staffData.position}</p> */}
             </div>
           </div>
         </div>
       )}
-      
     </div>
   );
 }

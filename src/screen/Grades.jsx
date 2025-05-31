@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import jsPDF from "jspdf";
 
 function Grades() {
     const navigate = useNavigate();
@@ -24,22 +23,22 @@ function Grades() {
         const parsedUser = JSON.parse(storedUser);
         setUser(parsedUser);
 
-        // 1. Fetch student object using user id
-        axios
-          .get(`http://localhost:4149/api/student/${parsedUser.id}`)
+        // Fetch student details using user ID
+        axios.get(`http://localhost:4149/api/student/${parsedUser.id}`)
           .then((response) => {
-            setStudentData(response.data);
+            setStudentData(response.data); // Store student data
             const studentId = response.data.id;
 
-            // 2. Fetch services using student id
-            axios
-              .get(`http://localhost:4149/api/services/${studentId}`)
+            // Fetch services for the student
+            axios.get(`http://localhost:4149/api/services/${studentId}`)
               .then((res) => {
                 setServices(res.data);
-                // Check if "View Grades" is available
+
+                // Check if the student has access to view grades
                 const canViewGrades = res.data.some(
                   (service) => service.service_id === "v_grade" && service.service_available === "Y"
                 );
+
                 if (!canViewGrades) {
                   setError("You do not have access to view grades.");
                   setLoading(false);
@@ -47,14 +46,13 @@ function Grades() {
                 }
 
                 if (parsedUser.role_id === 3) {
-                  // 3. Fetch grades using student id
-                  axios
-                    .get(`http://localhost:4149/api/grades/${studentId}`)
+                  // Fetch student grades using student ID
+                  axios.get(`http://localhost:4149/api/grades/${studentId}`)
                     .then((response) => {
                       setGradesData(response.data);
                       setLoading(false);
                     })
-                    .catch((error) => {
+                    .catch(() => {
                       setError("Failed to fetch Grade Data.");
                       setLoading(false);
                     });
@@ -71,42 +69,34 @@ function Grades() {
             setError("Failed to fetch student details.");
             setLoading(false);
           });
-      }, [navigate]);
+    }, [navigate]);
 
-    // Handle Logout
+    // Logout Handler
     const handleLogout = () => {
         localStorage.removeItem("user");
         navigate("/login");
-    };  
+    };
 
-    
+    // Call Backend API to Generate PDF
+    const downloadTranscript = async () => {
+        try {
+            if (!studentData?.id) {
+                alert("Student ID not found.");
+                return;
+            }
 
-    const generatePDF = () => {
-        if (grades.length === 0) {
-            alert("No grades available to generate a transcript.");
-            return;
+            const response = await fetch(`http://localhost:4149/api/generate-transcript/${studentData.id}`);
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `Transcript_${studentData.id}.pdf`;
+            a.click();
+        } catch (error) {
+            alert("Failed to generate transcript.");
+            console.error("Error generating PDF:", error);
         }
-
-        const doc = new jsPDF();
-        
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(18);
-        doc.text("Student Transcript", 105, 20, { align: "center" });
-
-        doc.setFontSize(12);
-        doc.text(`Student Name: ${user?.name}`, 20, 40);
-        doc.text(`Student ID: ${user?.id}`, 20, 50);
-        
-        doc.setFont("helvetica", "normal");
-        // doc.text(`Year: ${Year}`, 20, 70);
-
-        let yPos = 90;
-        grades.forEach((grade) => {
-            doc.text(`${grade.course_code} - ${grade.course_name}: ${grade.grade}`, 20, yPos);
-            yPos += 10;
-        });
-
-        doc.save(`Transcript_${grades.year}.pdf`);
     };
 
     if (loading) {
@@ -125,10 +115,6 @@ function Grades() {
 
     return (
         <div className="d-flex flex-column min-vh-100">
-            
-
-        
-
             {/* Grades Table */}
             <div className="container mt-4">
                 <h2 className="text-center mb-4">My Grades</h2>
@@ -146,7 +132,7 @@ function Grades() {
                         <tbody>
                             {grades.length > 0 ? (
                                 grades.map((grade) => (
-                                    <tr key={grade.id}> {/* use the correct id */}
+                                    <tr key={grade.id}>
                                         <td>{grade.year}</td>
                                         <td>{grade.semester}</td>
                                         <td>{grade?.course_code}</td>
@@ -161,14 +147,11 @@ function Grades() {
                             )}
                         </tbody>
                     </table>
-                    <button className="btn btn-primary mt-3" onClick={generatePDF}>
+                    <button className="btn btn-primary mt-3" onClick={downloadTranscript}>
                         Download Transcript
                     </button>
-
                 </div>
             </div>
-
-            
         </div>
     );
 }

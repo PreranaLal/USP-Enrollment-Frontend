@@ -58,6 +58,12 @@ const Navbar = () => {
               >
                 Manage Students
               </button>
+              <button
+                className="btn btn-link nav-item nav-link"
+                onClick={() => navigate("/SASGrades")}
+              >
+                Grade Recheck Forms
+              </button>
             </>
           )}
         </div>

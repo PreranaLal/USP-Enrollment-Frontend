@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Button from "react-bootstrap/Button";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -11,36 +11,62 @@ function ManageStudents() {
   const [editableServices, setEditableServices] = useState([]);
   const [error, setError] = useState("");
   const [showServices, setShowServices] = useState(false);
+  const [showStudentDetails, setShowStudentDetails] = useState(false); // NEW
+  const [holdUpdating, setHoldUpdating] = useState(false);
+  const [editHoldType, setEditHoldType] = useState("");
+  const [editIsHold, setEditIsHold] = useState("");
+  const [allStudents, setAllStudents] = useState([]); // NEW
 
-  // Search for student by student ID
-  const handleSearch = async (e) => {
-    e.preventDefault();
+  // Fetch all students on mount
+  useEffect(() => {
+    axios
+      .get("http://localhost:4149/api/students")
+      .then((res) => setAllStudents(res.data))
+      .catch(() => setError("Could not load students list."));
+  }, []);
+
+  // Loads a single student (used by both search and view button)
+  const loadStudentById = async (id) => {
     setError("");
     setStudent(null);
-    setFinanceData([]);
     setServicesData([]);
-    setShowServices(false); // Hide services table on new search
+    setFinanceData([]);
+    setShowServices(false);
+    setShowStudentDetails(true); // Show details when viewing student
     try {
-      // Fetch student details
-      const studentRes = await axios.get(`http://localhost:4149/api/student/by-id/${studentId}`);
+      const studentRes = await axios.get(`http://localhost:4149/api/student/by-id/${id}`);
       setStudent(studentRes.data);
-
-      // Fetch finance details
-      const financeRes = await axios.get(`http://localhost:4149/api/finances/${studentId}`);
+      setEditIsHold(studentRes.data.is_hold === "Yes" ? "Yes" : "No");
+      setEditHoldType(studentRes.data.hold_type || "");
+      const financeRes = await axios.get(`http://localhost:4149/api/finances/${id}`);
       setFinanceData(financeRes.data);
     } catch (err) {
       setError("Student or finance data not found.");
     }
   };
 
+  // Search for student by student ID
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (studentId) {
+      loadStudentById(studentId);
+    }
+  };
+
+  // Toggle show/hide services
   const handleShowServices = async () => {
-    try {
-      const servicesRes = await axios.get(`http://localhost:4149/api/services/${studentId}`);
-      setServicesData(servicesRes.data);
-      setEditableServices(servicesRes.data); // Initialize editableServices
-      setShowServices(true);
-    } catch (err) {
-      setError("Could not fetch student services.");
+    if (!showServices) {
+      try {
+        const id = student ? student.id : studentId;
+        const servicesRes = await axios.get(`http://localhost:4149/api/services/${id}`);
+        setServicesData(servicesRes.data);
+        setEditableServices(servicesRes.data);
+        setShowServices(true);
+      } catch (err) {
+        setError("Could not fetch student services.");
+      }
+    } else {
+      setShowServices(false);
     }
   };
 
@@ -65,11 +91,63 @@ function ManageStudents() {
     }
   };
 
+  // Toggle is_hold for student
+  const handleToggleHold = async () => {
+    if (!student) return;
+    setHoldUpdating(true);
+    try {
+      const newHoldValue = student.is_hold === "Y" ? "N" : "Y";
+      // Update on backend
+      await axios.put(
+        `http://localhost:4149/api/student/${student.id}/hold`,
+        { is_hold: newHoldValue }
+      );
+      // Update local state
+      setStudent((prev) => ({
+        ...prev,
+        is_hold: newHoldValue,
+      }));
+    } catch (err) {
+      setError("Failed to update hold status.");
+    }
+    setHoldUpdating(false);
+  };
+
+  // When student is loaded, set edit fields
+  React.useEffect(() => {
+    if (student) {
+      setEditIsHold(student.is_hold === "Yes" ? "Yes" : "No");
+      setEditHoldType(student.hold_type || "");
+    }
+  }, [student]);
+
+  // Update both is_hold and hold_type
+  const handleUpdateHold = async () => {
+    if (!student) return;
+    setHoldUpdating(true);
+    try {
+      await axios.put(
+        `http://localhost:4149/api/student/hold/${student.id}`,
+        {
+          is_hold: editIsHold,
+          hold_type: editHoldType,
+        }
+      );
+      setStudent((prev) => ({
+        ...prev,
+        is_hold: editIsHold,
+        hold_type: editHoldType,
+      }));
+    } catch (err) {
+      setError("Failed to update hold status or type.");
+    }
+    setHoldUpdating(false);
+  };
+
   return (
     <div className="d-flex flex-column min-vh-100">
-      
-
       <div className="container my-4">
+        
         {/* Search Box */}
         <form className="mb-4" onSubmit={handleSearch}>
           <div className="input-group">
@@ -90,21 +168,116 @@ function ManageStudents() {
           <div className="alert alert-danger text-center">{error}</div>
         )}
 
+        {/* All Students Table */}
+        {allStudents.length > 0 && (
+          <div className="table-responsive mb-4">
+            <table className="table table-bordered table-striped">
+              <thead className="thead-dark">
+                <tr>
+                  <th>Student ID</th>
+                  <th>Name</th>
+                  <th>View Student</th>
+                </tr>
+              </thead>
+              <tbody>
+                {allStudents.map((stu) => (
+                  <tr key={stu.id}>
+                    <td>{stu.id}</td>
+                    <td>{stu.first_name} {stu.last_name}</td>
+                    <td>
+                      <Button
+                        size="sm"
+                        variant="info"
+                        onClick={() => {
+                          if (student && showStudentDetails && student.id === stu.id) {
+                            // Hide details if already showing for this student
+                            setShowStudentDetails(false);
+                            setStudent(null);
+                            setFinanceData([]);
+                            setServicesData([]);
+                            setEditableServices([]);
+                          } else {
+                            // Show details for this student
+                            loadStudentById(stu.id);
+                            setShowStudentDetails(true);
+                          }
+                        }}
+                      >
+                        {(student && showStudentDetails && student.id === stu.id)
+                          ? "Hide Student Details"
+                          : "View Student Details"}
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
         {/* Student & Finance Table */}
-        {student && (
+        {student && showStudentDetails && (
           <div className="card shadow mb-4">
-            <div className="card-header bg-primary text-white">
-              Student Details
+            <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+              <span>Student Details</span>
+              
             </div>
             <div className="card-body">
-              <p>
-                <strong>Name:</strong> {student.first_name} {student.last_name}
-              </p>
-              <p>
-                <strong>Program:</strong> {student.program_name || "Not assigned"}
-              </p>
-              <Button variant="info" onClick={handleShowServices}>
-                Show Student Services
+              <table className="table">
+                <tbody>
+                  <tr>
+                    <th>Name:</th>
+                    <td>{student.first_name} {student.last_name}</td>
+                  </tr>
+                  <tr>
+                    <th>Program:</th>
+                    <td>{student.program_name || "Not assigned"}</td>
+                  </tr>
+                  <tr>
+                    <th>Is Hold:</th>
+                    <td>
+                      <select
+                        value={editIsHold}
+                        onChange={(e) => setEditIsHold(e.target.value)}
+                        className="form-select d-inline-block"
+                        style={{ width: "auto" }}
+                        disabled={holdUpdating}
+                      >
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Hold Type:</th>
+                    <td>
+                      <input
+                        type="text"
+                        className="form-control d-inline-block"
+                        style={{ width: "auto" }}
+                        value={editHoldType}
+                        onChange={(e) => setEditHoldType(e.target.value)}
+                        placeholder="Enter hold type"
+                        disabled={holdUpdating}
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <Button
+                variant="secondary"
+                size="sm"
+                className="mt-2"
+                onClick={handleUpdateHold}
+                disabled={holdUpdating}
+              >
+                Update Hold Status & Type
+              </Button>
+              <Button
+                variant="info"
+                className="ms-2"
+                onClick={handleShowServices}
+              >
+                {showServices ? "Hide Student Services" : "Show Student Services"}
               </Button>
             </div>
           </div>
@@ -171,9 +344,8 @@ function ManageStudents() {
             No finance data found for this student.
           </div>
         )}
+        
       </div>
-
-      
     </div>
   );
 }

@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-function CompassionateForm() {
+function Form() {
   const [formData, setFormData] = useState({
     fullName: "",
+    firstName: "",
+    lastName: "",
     title: "",
     uspId: "",
     dob: "",
@@ -156,43 +158,6 @@ function CompassionateForm() {
             <div className="col-md-6">
               <label>Applicant’s Signature</label>
               <input type="text" name="appSignature" className="form-control" value={formData.appSignature} onChange={handleChange} />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Section D */}
-      <div className="card mb-4">
-        <div className="card-header bg-primary text-white">Section D: Medical Officer</div>
-        <div className="card-body">
-          <div className="form-check">
-            <input type="checkbox" name="unable" className="form-check-input" checked={formData.medical.unable} onChange={handleChange} />
-            <label className="form-check-label">Student is unable to attend exam</label>
-          </div>
-          <div className="form-check">
-            <input type="checkbox" name="impaired" className="form-check-input" checked={formData.medical.impaired} onChange={handleChange} />
-            <label className="form-check-label">Student’s performance is likely to be impaired</label>
-          </div>
-          <div className="form-check">
-            <input type="checkbox" name="fine" className="form-check-input" checked={formData.medical.fine} onChange={handleChange} />
-            <label className="form-check-label">Student is able to attend without impairment</label>
-          </div>
-
-          <label className="mt-3">Comments</label>
-          <textarea name="comments" className="form-control" rows="3" value={formData.medical.comments} onChange={handleChange}></textarea>
-
-          <div className="row mt-3">
-            <div className="col-md-6">
-              <label>Medical Officer Name</label>
-              <input type="text" name="medOfficerName" className="form-control" value={formData.medical.medOfficerName} onChange={handleChange} />
-            </div>
-            <div className="col-md-6">
-              <label>Signature</label>
-              <input type="text" name="medOfficerSign" className="form-control" value={formData.medical.medOfficerSign} onChange={handleChange} />
-            </div>
-            <div className="col-md-6 mt-2">
-              <label>Date</label>
-              <input type="date" name="medDate" className="form-control" value={formData.medical.medDate} onChange={handleChange} />
             </div>
           </div>
         </div>

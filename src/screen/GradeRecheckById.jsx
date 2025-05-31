@@ -6,6 +6,7 @@ function GradeRecheckById() {
   const location = useLocation();
   const [form, setForm] = useState(null);
   const [status, setStatus] = useState("pending");
+  const [rejectReason, setRejectReason] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -37,6 +38,7 @@ function GradeRecheckById() {
       .then((entry) => {
         setForm(entry);
         setStatus(entry.status || "pending");
+        setRejectReason(entry.rejectReason || "");
         setLoading(false);
       })
       .catch(() => {
@@ -53,11 +55,18 @@ function GradeRecheckById() {
       const resp = await fetch(`http://localhost:5000/api/submissions/${id}/status`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status }),
+        body: JSON.stringify({
+          status,
+          rejectReason: status === "rejected" ? rejectReason : null,
+        }),
       });
       if (resp.ok) {
         setSuccess("Status updated!");
-        setTimeout(() => navigate("/GradeRecheckById"), 1000);
+        setForm((prev) => ({
+          ...prev,
+          status,
+          rejectReason: status === "rejected" ? rejectReason : null,
+        })); // Update local form state
       } else {
         setError("Failed to update status.");
       }
@@ -80,8 +89,8 @@ function GradeRecheckById() {
     return (
       <div className="container mt-5">
         <div className="alert alert-danger">{error}</div>
-        <button className="btn btn-link" onClick={() => navigate("/manager")}>
-          Back to Manager Table
+        <button className="btn btn-link" onClick={() => navigate("/SASGrades")}>
+          Back to Submissions
         </button>
       </div>
     );
@@ -127,6 +136,17 @@ function GradeRecheckById() {
                 <option value="approved">Approve</option>
                 <option value="rejected">Reject</option>
               </select>
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Reject Reason</label>
+              <textarea
+                className="form-control"
+                value={rejectReason}
+                onChange={(e) => setRejectReason(e.target.value)}
+                rows={2}
+                disabled={status !== "rejected"}
+                placeholder={status === "rejected" ? "Enter reason for rejection" : " "}
+              />
             </div>
             <button type="submit" className="btn btn-success">
               Update Form

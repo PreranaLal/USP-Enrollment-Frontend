@@ -73,7 +73,7 @@ function GradeRecheckSAS() {
                 <td>
                   <button
                     className="btn btn-sm btn-info"
-                    onClick={() => navigate(`/StudentGradeRecheck`)}
+                    onClick={() => navigate(`/GradeRecheckbyId?id=${entry.id}`)}
                   >
                     Form Details
                   </button>
