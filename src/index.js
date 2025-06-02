@@ -17,6 +17,10 @@ import StudentForms from './screen/StudentForms';
 import GradeRecheckSAS from './screen/GradeRecheckSAS';
 import StudentGradeRecheck from './screen/StudentGradeRecheck';
 import GradeRecheckById from './screen/GradeRecheckById';
+import Form from './screen/Form';
+
+import AdminApplications from './screen/AdminApplications';
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter>
@@ -29,6 +33,7 @@ root.render(
       <Route path="/Program" element={<Layout title="My Courses"><Program /></Layout>} />
       <Route path="/Grades" element={<Layout title="My Grades"><Grades /></Layout>} />
       <Route path="/Finances" element={<Layout title="My Finances"><Finances /></Layout>} />
+      <Route path="/Forms" element={<Layout title="Forms"><Form /></Layout>} />
       <Route path="/Program_Requirements" element={<Layout title="Program Requirements"><ProgramRequirements /></Layout>} />
       <Route path="/Course_Enroll" element={<Layout title="Enrollment"><Enroll /></Layout>} />
       <Route path="/ManageStudents" element={<Layout title="Manage Students"><ManageStudents /></Layout>} />
@@ -36,8 +41,13 @@ root.render(
       <Route path="/GradeRecheckById" element={<Layout title="temp"><GradeRecheckById /></Layout>} />
       <Route path="/StudentGradeRecheck" element={<Layout><StudentGradeRecheck /></Layout>} />
       <Route path="/StudentForms" element={<Layout title="Student Forms"><StudentForms /></Layout>} />
-      <Route path="/form" element={<Layout><form /></Layout>} />
+      <Route path="/Form" element={<Layout><Form /></Layout>} />
       <Route path="/Login" element={<Layout showNavbar={false} title="Login"><Login /></Layout>} />
+     
+  
+      {/* Admin Route for Applications */}
+      <Route path="/AdminApplications" element={<Layout title="Admin Applications"><AdminApplications /></Layout>} />
+
     </Routes>
   </BrowserRouter>
 );
